@@ -1,19 +1,30 @@
 const status = document.getElementById("status");
+let sedangNgomong = false;
 
 function ngomong(teks) {
+  if (sedangNgomong) speechSynthesis.cancel();
+
+  sedangNgomong = true;
   status.innerText = teks;
+
   const u = new SpeechSynthesisUtterance(teks);
   u.lang = "id-ID";
+
+  u.onend = () => {
+    sedangNgomong = false;
+  };
+
   speechSynthesis.speak(u);
 }
 
 function mulai() {
+  // trigger manual biar browser ngizinin suara
+  ngomong("Mode perintah suara aktif");
+
   if (!('webkitSpeechRecognition' in window)) {
     ngomong("Browser tidak mendukung pengenalan suara");
     return;
   }
-
-  ngomong("Silakan berbicara");
 
   const rec = new webkitSpeechRecognition();
   rec.lang = "id-ID";
@@ -23,17 +34,48 @@ function mulai() {
     const kata = e.results[0][0].transcript.toLowerCase();
     ngomong("Anda mengatakan " + kata);
   };
+
+  rec.onerror = () => ngomong("Terjadi kesalahan mikrofon");
 }
 
 function bacaFoto(e) {
   const foto = e.target.files[0];
   if (!foto) return;
 
-  ngomong("Sedang memproses gambar");
+  ngomong("Sedang membaca gambar");
 
   Tesseract.recognize(foto, 'ind')
     .then(res => {
-      const teks = res.data.text.toUpperCase();
+      const teks = res.data.text.trim().toUpperCase();
+
+      if (teks.includes("RUPIAH") || teks.includes("BANK INDONESIA")) {
+        deteksiUang(teks);
+      } else {
+        ngomong(teks || "Teks tidak terbaca");
+      }
+    });
+}
+
+function deteksiUang(teks) {
+  const daftar = {
+    "1000": "seribu",
+    "2000": "dua ribu",
+    "5000": "lima ribu",
+    "10000": "sepuluh ribu",
+    "20000": "dua puluh ribu",
+    "50000": "lima puluh ribu",
+    "100000": "seratus ribu"
+  };
+
+  for (let angka in daftar) {
+    if (teks.includes(angka)) {
+      ngomong("Ini uang " + daftar[angka] + " rupiah");
+      return;
+    }
+  }
+
+  ngomong("Uang terdeteksi, nominal tidak jelas");
+}
 
       // DETEKSI UANG
       if (teks.includes("BANK INDONESIA") || teks.includes("RUPIAH")) {
