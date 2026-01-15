@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>BacaSuara</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+}
+.app{
+  background:#111;
+  width:90%;
+  max-width:420px;
+  padding:24px;
+  border-radius:18px;
+  box-shadow:0 0 30px rgba(0,0,0,.6);
+  text-align:center;
+}
+h1{margin:0 0 8px}
+p{opacity:.8;font-size:14px}
+button,label{
+  width:100%;
+  padding:18px;
+  margin-top:14px;
+  font-size:18px;
+  font-weight:bold;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+}
+button{background:#00c6ff;color:#000}
+label{background:#22eaaa;color:#000;display:block}
+input{display:none}
+#status{margin-top:16px;opacity:.7;font-size:14px}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <h1>🔊 BacaSuara</h1>
+  <p>Pembaca teks & uang untuk tunanetra</p>
+
+  <button onclick="startVoice()">🎤 Tes / Perintah Suara</button>
+  <label for="img">📷 Pilih Foto (Teks / Uang)</label>
+  <input id="img" type="file" accept="image/*">
+
+  <div id="status">Siap digunakan</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
